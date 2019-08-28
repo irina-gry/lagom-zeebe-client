@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" id="Definitions_0v5p4d3" targetNamespace="http://bpmn.io/schema/bpmn" exporter="Zeebe Modeler" exporterVersion="0.6.2">
+  <bpmn:process id="order-process" name="Order Process" isExecutable="true">
+    <bpmn:startEvent id="StartEvent_1" name="Order placed">
+      <bpmn:outgoing>SequenceFlow_0exl733</bpmn:outgoing>
+    </bpmn:startEvent>
+    <bpmn:endEvent id="EndEvent_14cbp8v" name="Order registered">
+      <bpmn:incoming>SequenceFlow_01w9eyz</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_1woq6ei" name="Is Delivery?">
+      <bpmn:incoming>SequenceFlow_0exl733</bpmn:incoming>
+      <bpmn:outgoing>delivery-order</bpmn:outgoing>
+      <bpmn:outgoing>not-delivery-order</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_0exl733" sourceRef="StartEvent_1" targetRef="ExclusiveGateway_1woq6ei" />
+    <bpmn:serviceTask id="delivery-registration" name="Delivery registration">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="delivery-registration" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>delivery-order</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_02b0lxz</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="delivery-order" name="yes" sourceRef="ExclusiveGateway_1woq6ei" targetRef="delivery-registration">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">delivery==true</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:serviceTask id="pickup-registration" name="Pickup Registration">
+      <bpmn:extensionElements>
+        <zeebe:taskDefinition type="pickup-registration" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>not-delivery-order</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_1i0lmuf</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:sequenceFlow id="not-delivery-order" name="no" sourceRef="ExclusiveGateway_1woq6ei" targetRef="pickup-registration">
+      <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">delivery==false</bpmn:conditionExpression>
+    </bpmn:sequenceFlow>
+    <bpmn:exclusiveGateway id="ExclusiveGateway_0zn6w22">
+      <bpmn:incoming>SequenceFlow_02b0lxz</bpmn:incoming>
+      <bpmn:incoming>SequenceFlow_1i0lmuf</bpmn:incoming>
+      <bpmn:outgoing>SequenceFlow_01w9eyz</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:sequenceFlow id="SequenceFlow_01w9eyz" sourceRef="ExclusiveGateway_0zn6w22" targetRef="EndEvent_14cbp8v" />
+    <bpmn:sequenceFlow id="SequenceFlow_02b0lxz" sourceRef="delivery-registration" targetRef="ExclusiveGateway_0zn6w22" />
+    <bpmn:sequenceFlow id="SequenceFlow_1i0lmuf" sourceRef="pickup-registration" targetRef="ExclusiveGateway_0zn6w22" />
+    <bpmn:textAnnotation id="TextAnnotation_05nfy21">
+      <bpmn:text>Input vars: isDelivery:bool, orderId:string</bpmn:text>
+    </bpmn:textAnnotation>
+  </bpmn:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="order-process">
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="197" y="63" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="183" y="106" width="64" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_14cbp8v_di" bpmnElement="EndEvent_14cbp8v">
+        <dc:Bounds x="721" y="98" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="699" y="141" width="81" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="TextAnnotation_05nfy21_di" bpmnElement="TextAnnotation_05nfy21">
+        <dc:Bounds x="142" y="124" width="127.99860154905336" height="53.35628227194492" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="ExclusiveGateway_1woq6ei_di" bpmnElement="ExclusiveGateway_1woq6ei" isMarkerVisible="true">
+        <dc:Bounds x="319" y="56" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="315" y="32" width="58" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0exl733_di" bpmnElement="SequenceFlow_0exl733">
+        <di:waypoint x="233" y="81" />
+        <di:waypoint x="319" y="81" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_01e0dso_di" bpmnElement="delivery-registration">
+        <dc:Bounds x="455" y="41" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0jbpusv_di" bpmnElement="delivery-order">
+        <di:waypoint x="369" y="81" />
+        <di:waypoint x="455" y="81" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="404" y="63" width="17" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ServiceTask_0j0hrga_di" bpmnElement="pickup-registration">
+        <dc:Bounds x="455" y="151" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_0u5r155_di" bpmnElement="not-delivery-order">
+        <di:waypoint x="344" y="106" />
+        <di:waypoint x="344" y="191" />
+        <di:waypoint x="455" y="191" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="402" y="170" width="13" height="14" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="ExclusiveGateway_0zn6w22_di" bpmnElement="ExclusiveGateway_0zn6w22" isMarkerVisible="true">
+        <dc:Bounds x="619" y="91" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SequenceFlow_01w9eyz_di" bpmnElement="SequenceFlow_01w9eyz">
+        <di:waypoint x="669" y="116" />
+        <di:waypoint x="721" y="116" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_02b0lxz_di" bpmnElement="SequenceFlow_02b0lxz">
+        <di:waypoint x="555" y="81" />
+        <di:waypoint x="587" y="81" />
+        <di:waypoint x="587" y="116" />
+        <di:waypoint x="619" y="116" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SequenceFlow_1i0lmuf_di" bpmnElement="SequenceFlow_1i0lmuf">
+        <di:waypoint x="555" y="191" />
+        <di:waypoint x="644" y="191" />
+        <di:waypoint x="644" y="141" />
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn:definitions>
